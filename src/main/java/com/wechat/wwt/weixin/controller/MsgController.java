@@ -8,8 +8,7 @@ package com.wechat.wwt.weixin.controller;
 
 
 import com.wechat.wwt.log.Log;
-import com.wechat.wwt.utils.Config;
-import com.wechat.wwt.weixin.api.WeChatApiConfig;
+import com.wechat.wwt.weixin.api.WeChatMsgManager;
 import com.wechat.wwt.weixin.msg.in.InImageMsg;
 import com.wechat.wwt.weixin.msg.in.InLinkMsg;
 import com.wechat.wwt.weixin.msg.in.InLocationMsg;
@@ -45,27 +44,27 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 接收微信服务器消息，自动解析成 InMsg 并分发到相应的处理方法
  */
-public abstract class MsgController{
+public abstract class MsgController extends Controller{
 
 
     private static final Log log = Log.getLog(MsgController.class);
 
-    private ThreadLocal<Controller> controllerThreadLocal = new ThreadLocal<Controller>();
+
     /**
      * weixin 公众号服务器调用唯一入口，即在开发者中心输入的 URL 必须要指向此 action
      */
     public void index(HttpServletRequest request, HttpServletResponse response) {
-//        init(request, response);
-        Controller controller = new Controller(request,response);
-        controllerThreadLocal.set(controller);
+        init(request, response);
+
+        WeChatMsgManager weChatMsgManager = getWeChatMsgManager();
         // 如果是服务器配置请求，则配置服务器并返回
-        if (controller.isConfigServerRequest()) {
-            controller.configServer();
+        if (weChatMsgManager.isConfigServerRequest()) {
+            weChatMsgManager.configServer();
             return;
         }
 
         // 解析消息并根据消息类型分发到相应的处理方法
-        InMsg msg = controller.getInMsg();
+        InMsg msg = weChatMsgManager.getInMsg();
         if (msg instanceof InTextMsg)
             processInTextMsg((InTextMsg) msg);
         else if (msg instanceof InImageMsg)
@@ -117,18 +116,15 @@ public abstract class MsgController{
         else if (msg instanceof InMerChantOrderEvent)
             processInMerChantOrderEvent((InMerChantOrderEvent) msg);
         else if (msg instanceof InNotDefinedEvent) {
-            log.error("未能识别的事件类型。 消息 xml 内容为：\n" + controller.getInMsgXml());
+            log.error("未能识别的事件类型。 消息 xml 内容为：\n" + weChatMsgManager.getInMsgXml());
             processIsNotDefinedEvent((InNotDefinedEvent) msg);
         } else if (msg instanceof InNotDefinedMsg) {
-            log.error("未能识别的消息类型。 消息 xml 内容为：\n" + controller.getInMsgXml());
+            log.error("未能识别的消息类型。 消息 xml 内容为：\n" + weChatMsgManager.getInMsgXml());
             processIsNotDefinedMsg((InNotDefinedMsg) msg);
         }
     }
 
-    public Controller getController(){
-        Controller controller = controllerThreadLocal.get();
-        return controller;
-    }
+
 
     // 处理接收到的文本消息
     protected abstract void processInTextMsg(InTextMsg inTextMsg);
