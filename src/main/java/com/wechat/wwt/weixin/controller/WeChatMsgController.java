@@ -58,7 +58,7 @@ public class WeChatMsgController extends MsgController{
     @Override
     protected void processInTextMsg(InTextMsg inTextMsg) {
         String content = inTextMsg.getContent();
-        getWeChatMsgManager().renderOutTextMsg(content);
+        renderOutTextMsg(content);
     }
 
     @Override

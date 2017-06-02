@@ -532,6 +532,47 @@ public class WeChatMsgManager {
         return doSetCookie(name, null, 0, path, domain, null);
     }
 
+    public void redirect(String url) {
+        redirect(url,false);
+    }
+
+    public String buildFinalUrl(String url,boolean withQueryString) {
+        String result;
+        String contextPath = request.getContextPath();
+        // ^((https|http|ftp|rtsp|mms)?://)$   ==> indexOf 取值为 (3, 5)
+        if (contextPath != null && (url.indexOf("://") == -1 || url.indexOf("://") > 5)) {
+            result = contextPath + url;
+        } else {
+            result = url;
+        }
+
+        if (withQueryString) {
+            String queryString = request.getQueryString();
+            if (queryString != null) {
+                if (result.indexOf("?") == -1) {
+                    result = result + "?" + queryString;
+                } else {
+                    result = result + "&" + queryString;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Redirect to url
+     */
+    public void redirect(String url, boolean withQueryString) {
+        String finalUrl = buildFinalUrl(url,withQueryString);
+
+        try {
+            response.sendRedirect(finalUrl);	// always 302
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private WeChatMsgManager doSetCookie(String name, String value, int maxAgeInSeconds, String path, String domain, Boolean isHttpOnly) {
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(maxAgeInSeconds);
