@@ -5,7 +5,7 @@
   <artifactId>wechatDemo</artifactId>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>redEnvelope</name>
+  <name>wechatDemo</name>
   <url>http://maven.apache.org</url>
   <properties>
     <jetty.version>9.2.5.v20141112</jetty.version>
@@ -118,6 +118,11 @@
       <version>3.1</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.3</version>
+    </dependency>
       <dependency>
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>

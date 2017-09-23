@@ -8,6 +8,7 @@ package com.wechat.wwt.weixin.controller;
 
 
 import com.wechat.wwt.log.Log;
+import com.wechat.wwt.utils.Config;
 import com.wechat.wwt.weixin.api.WeChatMsgManager;
 import com.wechat.wwt.weixin.msg.in.InImageMsg;
 import com.wechat.wwt.weixin.msg.in.InLinkMsg;
@@ -54,7 +55,7 @@ public abstract class MsgController extends Controller{
      * weixin 公众号服务器调用唯一入口，即在开发者中心输入的 URL 必须要指向此 action
      */
     public void index(HttpServletRequest request, HttpServletResponse response) {
-        init(request, response);
+//        init(request, response);
 
         WeChatMsgManager weChatMsgManager = getWeChatMsgManager();
         // 如果是服务器配置请求，则配置服务器并返回

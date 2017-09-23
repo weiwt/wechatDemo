@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class WeChatApiConfig implements Serializable {
     private String token = null;
     private String appId = null;
+    private String mchID = null;
     private String appSecret = null;
     private String encodingAesKey = null;
     private boolean messageEncrypt = false;	// 消息加密与否
@@ -62,6 +63,14 @@ public class WeChatApiConfig implements Serializable {
         if (appSecret == null)
             throw new IllegalStateException("appSecret 未被赋值");
         return appSecret;
+    }
+
+    public String getMchID() {
+        return mchID;
+    }
+
+    public void setMchID(String mchID) {
+        this.mchID = mchID;
     }
 
     public void setAppSecret(String appSecret) {
