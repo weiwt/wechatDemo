@@ -664,25 +664,28 @@ public class WeChatMsgManager {
     }
 
     public String getInMsgXml() {
-        if (inMsgXml == null)
+        if (inMsgXml == null){
             inMsgXml = HttpKit.readData(request);
 
-        // 是否需要解密消息
-        if (Config.weChatApiConfig.isEncryptMessage()) {
-            inMsgXml = MsgEncryptKit.decrypt(inMsgXml, getPara("timestamp"), getPara("nonce"), getPara("msg_signature"));
+            // 是否需要解密消息
+            if (Config.weChatApiConfig.isEncryptMessage()) {
+                inMsgXml = MsgEncryptKit.decrypt(inMsgXml, getPara("timestamp"), getPara("nonce"), getPara("msg_signature"));
+            }
+
+            if (Config.devMode)
+                System.out.println("接收消息:\n" + inMsgXml);
         }
 
         if (StringUtil.isBlank(inMsgXml)) {
             throw new RuntimeException("请不要在浏览器中请求该连接,调试请查看WIKI:http://git.oschina.net/jfinal/jfinal-weixin/wikis/JFinal-weixin-demo%E5%92%8C%E8%B0%83%E8%AF%95");
         }
+
         return inMsgXml;
     }
 
     public InMsg getInMsg() {
         if (inMsg == null)
             inMsgXml = getInMsgXml();
-        if (Config.devMode)
-            System.out.println("接收消息:" + inMsgXml);
         return InMsgParser.parse(inMsgXml);
     }
 }
